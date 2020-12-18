@@ -6,23 +6,31 @@ pipeline {
    }
 
    stages {
-      stage('Compile') {
+      stage('Build') {
          steps {
-            echo "mvn clean compile"
+            // Get some code from a GitHub repository 
+            git 'https://github.com/jglick/simple-maven-project-with-tests.git'
+            echo "mvn -Dmaven.test.failure.ignore=true clean compile"
          }
          }
-      stage('Test') {
+      stage("Test") {
           steps {
-            echo "mvn clean test"
+            git 'https://github.com/jglick/simple-maven-project-with-tests.git'  
+            echo "mvn -Dmaven.test.failure.ignore=true clean test"
             
           }
 
       }
       stage("Deploy") {
           steps {
-            echo "mvn clean install"
+            git 'https://github.com/jglick/simple-maven-project-with-tests.git'  
+            echo "mvn -Dmaven.test.failure.ignore=true clean install"
             
           }
+          post {
+              success {
+                  archiveArtifacts 'target/*.jar'
+              }
 
           }
 
@@ -30,4 +38,5 @@ pipeline {
       }
 
       }
+   }
 
